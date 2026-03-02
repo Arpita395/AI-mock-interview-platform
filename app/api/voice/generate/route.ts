@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     console.log("OPENROUTER:", process.env.OPENROUTER_API_KEY);
 
     const { object } = await generateObject({
-        model: openrouter('mistralai/mistral-7b-instruct'), 
+        model: openrouter('openai/gpt-4o-mini'), 
         schema: z.object({
             questions: z.array(z.string())
         }),

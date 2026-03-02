@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, use } from 'react';
 
 declare global {
   interface Window {
@@ -59,11 +59,27 @@ const Agent= ({userName, userId, type}: AgentProps)=> {
     setIsSpeaking(false);
 
     if (shouldListen) {
-      recognitionRef.current?.start();
+      startListening();
     }
   };
 
   synth.speak(utterance);
+};
+
+const startListening = () => {
+  if (!recognitionRef.current) return;
+
+  try {
+    recognitionRef.current.abort(); // force reset
+  } catch {}
+
+  setTimeout(() => {
+    try {
+      recognitionRef.current.start();
+    } catch (err) {
+      console.log("Restart blocked:", err);
+    }
+  }, 400); // small delay is important
 };
 
 
@@ -79,17 +95,44 @@ const Agent= ({userName, userId, type}: AgentProps)=> {
   const recognition = new SpeechRecognition();
   recognition.lang = "en-US";
   recognition.interimResults = false;
-  recognition.continuous = false;
+  recognition.continuous = true;
 
   recognition.onstart = () => {
   console.log("🎤 Listening...");
   setCallStatus(CallStatus.ACTIVE);
 };
 
+const handleUserSentence = async (sentence: string) => {
+    const res = await fetch("/api/voice/parse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sentence }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        setInterviewData(prev => ({
+            ...prev,
+            role: data.data.role || prev.role,
+            type: data.data.type || prev.type,
+            level: data.data.level || prev.level,
+            techstack: data.data.techstack || prev.techstack,
+            amount: data.data.amount || prev.amount
+        }));
+
+    } else {
+        console.log("FULL RESPONSE: ", data);
+    }
+};
+
+
   recognition.onresult = (event: any) => {
   const transcript = event.results[0][0].transcript;
 
-  console.log("Final Transcript:", transcript);
+  console.log("User said:", transcript);
+
+  // handleUserSentence(transcript);
 
   setMessages(prev => [
     ...prev,
@@ -171,10 +214,13 @@ const generateInterview = async () => {
   speak("Generating your interview. Please wait.");
 
   try {
-    const res = await fetch("/", {
+    const res = await fetch("/api/voice/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(interviewData),
+      body: JSON.stringify({
+        ...interviewData,
+        userid: userId,   
+      }),
     });
 
     const data = await res.json();
