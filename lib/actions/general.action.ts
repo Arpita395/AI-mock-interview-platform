@@ -3,10 +3,11 @@
 import { feedbackSchema } from "@/constants"
 import { db } from "@/firebase/admin"
 import { createOpenAI } from "@ai-sdk/openai"
-import { generateObject, generateText } from "ai"
+import { generateText } from "ai"
 
 
 export async function getInterviewsByUserId(userId: string): Promise<Interview[] | null> {
+    if(!userId) return []
     const interviews= await db
     .collection('interviews')
     .where('userId', '==', userId)

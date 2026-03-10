@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "@/firebase/client"
 import { signIn, signUp } from "@/lib/actions/auth.action"
+import { Loader2 } from "lucide-react"
 
 
 const authFormSchema = (type: FormType)=> {
@@ -37,6 +38,8 @@ const AuthForm= ({type}: {type: FormType})=> {
             password: "",
         },
     })
+    
+    const {isSubmitting}= form.formState
 
     // Define a submit handler.
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -122,7 +125,13 @@ const AuthForm= ({type}: {type: FormType})=> {
                         type= "password" 
                         />
                     
-                    <Button className="btn" type="submit">{isSignIn ? "Sign In" : "Create an Account"}</Button>
+                    <Button className="btn"
+                     type="submit"
+                     disabled={form.formState.isSubmitting}
+                     >
+                        {form.formState.isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />} 
+                                      
+                        {isSignIn ? "Sign In" : "Create an Account"}</Button>
                 </form>
             </Form>
 

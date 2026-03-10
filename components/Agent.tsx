@@ -47,7 +47,7 @@ const Agent= ({userName, userId, type, interviewId, questions}: AgentProps)=> {
     });
 
 
-    // speak function
+  // speak function
   const speak = (text: string, shouldListen = false) => {
   const synth = window.speechSynthesis;
   const utterance = new SpeechSynthesisUtterance(text);
@@ -85,7 +85,7 @@ const startListening = () => {
     } catch (err) {
       console.log("Restart blocked:", err);
     }
-  }, 400); // small delay is important
+  }, 400); // small delay 
 };
 
 
@@ -108,30 +108,6 @@ const startListening = () => {
   setCallStatus(CallStatus.ACTIVE);
 };
 
-// const handleUserSentence = async (sentence: string) => {
-//     const res = await fetch("/api/voice/parse", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ sentence }),
-//     });
-
-//     const data = await res.json();
-
-//     if (data.success) {
-//         setInterviewData(prev => ({
-//             ...prev,
-//             role: data.data.role || prev.role,
-//             type: data.data.type || prev.type,
-//             level: data.data.level || prev.level,
-//             techstack: data.data.techstack || prev.techstack,
-//             amount: data.data.amount || prev.amount
-//         }));
-
-//     } else {
-//         console.log("FULL RESPONSE: ", data);
-//     }
-// };
-
 
   recognition.onresult = (event: any) => {
   const transcript = event.results[0][0].transcript;
@@ -145,9 +121,8 @@ const startListening = () => {
     { role: "user", content: transcript }
   ]);
 
-  // =============================
-  // GENERATE FLOW (DO NOT TOUCH)
-  // =============================
+  
+  // GENERATE FLOW
   if (type === "generate") {
     setTimeout(() => {
       setStep(prevStep => {
@@ -178,10 +153,8 @@ const startListening = () => {
     return;
   }
 
-  // =============================
-  // INTERVIEW FLOW (FIXED)
-  // =============================
-
+  
+  // INTERVIEW FLOW 
   if(type!== "generate") {
     if(!questions) return 
   }

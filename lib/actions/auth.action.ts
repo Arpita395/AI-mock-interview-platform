@@ -121,10 +121,11 @@ export async function isAuthenticated() {
 
 export async function logoutUser() {
     const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get("session")?.value
 
     try {
-        if(sessionCookie){
+        const sessionCookie = cookieStore.get("session")?.value
+
+        if (sessionCookie) {
             const decodedClaims = await auth.verifySessionCookie(sessionCookie)
             await auth.revokeRefreshTokens(decodedClaims.uid)
         }
@@ -133,8 +134,8 @@ export async function logoutUser() {
 
         return { success: true }
 
-    } catch (e) {
-        console.error("Logout error:", e)
+    } catch (error) {
+        console.error("Logout error:", error)
         return { success: false }
     }
 }
