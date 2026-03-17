@@ -2,7 +2,7 @@ import Image from 'next/image';
 import * as React from 'react';
 import { getTechLogos } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-
+ 
 const DisplayTechIcons= async ({techStack}: TechIconProps)=> {
     const techIcons= await getTechLogos(techStack)
 

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { signOut } from "firebase/auth"
 import { auth } from "@/firebase/client"
+import { Power} from "lucide-react"
 
 export default function LogoutButton() {
 
@@ -28,14 +29,7 @@ export default function LogoutButton() {
                 Logout
             </button>
 
-            <Image
-                src="/logout.jpg"
-                alt="logout"
-                width={38}
-                height={32}
-                onClick={handleLogout}
-                className="sm:hidden cursor-pointer"
-            />
+            <Power className="md:hidden cursor-pointer" size={38} onClick={handleLogout}  />
 
         </div>
     )

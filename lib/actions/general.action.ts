@@ -137,6 +137,10 @@ Return ONLY JSON. Do not include explanation or markdown.
 
 export async function getFeedbackByInterviewId(params: GetFeedbackByInterviewIdParams): Promise<Feedback | null> {
     const {interviewId, userId}= params
+
+    if (!interviewId || !userId) {
+    return null
+    }
     
     const feedback= await db
     .collection('feedback')
